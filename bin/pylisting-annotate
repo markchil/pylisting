@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+# Copyright 2021 Mark Chilenski
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import argparse
+
+from pylisting.outputcapture import run_and_capture_output
+from pylisting.annotate import annotate_program
+
+
+def make_parser():
+    parser = argparse.ArgumentParser(
+        description='Execute a Python file and annotate it with the output '
+                    'from each line.'
+    )
+    parser.add_argument(
+        'input_filename',
+        type=str,
+        help='The file to execute and annotate.'
+    )
+    parser.add_argument(
+        'output_filename',
+        type=str,
+        help='The file to save the results to.'
+    )
+    return parser
+
+
+if __name__ == '__main__':
+    parser = make_parser()
+    args = parser.parse_args()
+
+    with open(args.input_filename, 'r') as input_file:
+        program = input_file.read()
+
+    stdout_history, stderr_history = run_and_capture_output(program)
+    annotated_program = annotate_program(
+        program, stdout_history, stderr_history
+    )
+
+    with open(args.output_filename, 'w') as output_file:
+        output_file.write(annotated_program)

@@ -62,6 +62,14 @@ class OutputTracker(object):
         self.caller_target = caller_target
 
     def get_caller(self):
+        """Get the calling frame's info. If the requested caller target can't
+        be matched, a CallerTargetNotFoundError is raised.
+
+        Returns
+        -------
+        caller : namedtuple
+            The info on the calling frame.
+        """
         if isinstance(self.caller_target, int):
             try:
                 frame = inspect.stack()[self.caller_target + 2].frame
